@@ -1,0 +1,26 @@
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
+             version="2.1">
+	<persistence-unit name="OrganisationPU">
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<jta-data-source>java:jboss/datasources/OrganisationDS</jta-data-source>
+		<properties>
+			<!-- SQL Dialekt -->
+			<!-- https://docs.jboss.org/hibernate/orm/5.0/userguide/html_single/Hibernate_User_Guide.html#database-dialect -->
+			<!-- https://docs.jboss.org/hibernate/orm/5.0/userguide/html_single/Hibernate_User_Guide.html#portability-dialectresolver -->
+			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect" />
+		
+			<!-- Entity Model Validierung -->
+			<property name="hibernate.hbm2ddl.auto" value="validate" />
+		
+			<!-- Caching -->
+			<!-- https://www.tutorialspoint.com/hibernate/hibernate_caching.htm -->
+			<property name="hibernate.cache.region.factory_class"
+				value="org.jboss.as.jpa.hibernate5.infinispan.InfinispanRegionFactory" />
+			<property name="hibernate.cache.use_query_cache" value="true" />
+			<!-- https://docs.jboss.org/author/display/WFLY8/JPA+Reference+Guide#JPAReferenceGuide-UsingtheInfinispansecondlevelcache -->
+			<property name="hibernate.cache.use_second_level_cache" value="true" />
+		</properties>
+	</persistence-unit>
+</persistence>

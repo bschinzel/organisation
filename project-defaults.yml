@@ -1,0 +1,25 @@
+project:
+  stage: development
+swarm:
+  port:
+    offset: 200
+  logging:
+    loggers:
+      de.schinzel:
+        level: TRACE
+      org.jboss.resteasy:
+        level: INFO
+      org.infinispan:
+        level: INFO
+  datasources:
+    data-sources:
+      OrganisationDS:
+        driver-name: mariadb
+        connection-url: jdbc:mariadb://localhost/organisation
+        user-name: aFzu&beZn+45tUox
+        password: h%D3oE2bxu1wj$K
+        jta: true
+        spy: true
+        statistics-enabled: true
+        check-valid-connection-sql: "SELECT 1"
+                
