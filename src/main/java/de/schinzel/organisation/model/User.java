@@ -19,6 +19,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name = "user")
 @NamedQueries({
+	@NamedQuery(name = "einUser", 
+			query = "SELECT u FROM User AS u WHERE u.name = :name AND u.passwort = :passwort"),
 	@NamedQuery(name = "alleUser", 
 			query = "SELECT u FROM User AS u WHERE u.organisation.uuid = :organisationUuid"),
 	@NamedQuery(name = "loescheUser", 

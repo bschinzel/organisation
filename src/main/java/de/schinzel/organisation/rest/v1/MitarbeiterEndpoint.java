@@ -5,13 +5,17 @@ import java.util.List;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.PathParam;
@@ -38,6 +42,8 @@ public class MitarbeiterEndpoint {
 	private static final Logger LOGGER = Logger.getLogger(MitarbeiterEndpoint.class); 
 	private final Timer requestsGetAlleMitarbeiter = Metrics.REGISTRY.timer(
 			MetricRegistry.name(MitarbeiterEndpoint.class, "GET /organisationen/v1/mitarbeiter/ ?organisationUuid"));
+	private final Timer requestsGetMitarbeiter = Metrics.REGISTRY.timer(
+			MetricRegistry.name(MitarbeiterEndpoint.class, "GET /organisationen/v1/mitarbeiter/ header: user, passwort"));
 	private final Timer requestsPostMitarbeiter = Metrics.REGISTRY.timer(
 			MetricRegistry.name(MitarbeiterEndpoint.class, "POST /organisationen/v1/mitarbeiter/"));
 	private final Timer requestsDeleteMitarbeiter = Metrics.REGISTRY.timer(
@@ -48,6 +54,34 @@ public class MitarbeiterEndpoint {
 			MetricRegistry.name(MitarbeiterEndpoint.class, "PUT /organisationen/v1/mitarbeiter/{useruuid}/rolle/{rolleuuid}"));
 	
 	@PersistenceContext private EntityManager em;
+	
+	@GET
+	@Path("/login")
+	@Produces(MediaType.APPLICATION_JSON)
+	@NoCache
+	@Transactional(Transactional.TxType.SUPPORTS)
+	public Response login(@HeaderParam("X-Username") String name, @HeaderParam("X-Password") String passwort) {
+		
+		final Timer.Context timercontext = requestsGetMitarbeiter.time();
+		User user = null;
+		LOGGER.trace("GET User anhand Login");
+		try {
+			user = this.em.createNamedQuery("einUser", User.class)
+				.setParameter("name", name)
+				.setParameter("passwort", passwort)
+				.getSingleResult();
+			
+			return Response.ok(user).build();
+		} catch (NoResultException e) {
+			LOGGER.debug("User '" + name + "' mit Passwort '" + passwort + "' nicht gefunden");
+			return Response.status(Response.Status.NOT_FOUND).build();
+		} catch (Exception e) {
+			LOGGER.error("GET User anhand Login fehlgeschlagen");
+			throw e;
+		} finally {
+			timercontext.stop();
+		}
+	}
 	
 	@GET
 	@Path("/")
