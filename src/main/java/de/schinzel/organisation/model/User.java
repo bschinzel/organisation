@@ -19,8 +19,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name = "user")
 @NamedQueries({
-	@NamedQuery(name = "einUser", 
-			query = "SELECT u FROM User AS u WHERE u.name = :name AND u.passwort = :passwort"),
+	@NamedQuery(name = "userAnhandBenutzerkennung", 
+			query = "SELECT u FROM User AS u WHERE (u.name = :kennung OR u.email = :kennung) AND u.passwort = :passwort"),
 	@NamedQuery(name = "alleUser", 
 			query = "SELECT u FROM User AS u WHERE u.organisation.uuid = :organisationUuid"),
 	@NamedQuery(name = "loescheUser", 
@@ -123,6 +123,16 @@ public class User {
 
 	public void setGruppen(List<Gruppe> gruppen) {
 		this.gruppen = gruppen;
+	}
+	
+	public UserDTO toDTO() {
+		UserDTO dto = new UserDTO();
+		
+		dto.setUuid(this.uuid);
+		dto.setEmail(this.email);
+		dto.setName(this.name);
+		
+		return dto;
 	}
 
 	@Override

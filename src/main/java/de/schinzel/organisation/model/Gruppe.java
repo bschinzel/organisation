@@ -42,14 +42,14 @@ public class Gruppe implements Serializable {
 	
 	private String name;
 	
-	@OneToMany(mappedBy = "parentuuid", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "parentuuid", fetch = FetchType.LAZY)
 	private Collection<Gruppe> untergruppen;
 	
 	@ManyToOne
 	@JoinColumn(name = "organisationuuid")
 	private Organisation organisation;
 	
-	@ManyToMany(mappedBy = "gruppen")
+	@ManyToMany(mappedBy = "gruppen", fetch = FetchType.LAZY)
 	private List<User> user;
 	
 	@Version

@@ -60,23 +60,28 @@ public class MitarbeiterEndpoint {
 	@Produces(MediaType.APPLICATION_JSON)
 	@NoCache
 	@Transactional(Transactional.TxType.SUPPORTS)
-	public Response login(@HeaderParam("X-Username") String name, @HeaderParam("X-Password") String passwort) {
+	public Response login(@HeaderParam("X-Benutzerkennung") String kennung, @HeaderParam("X-Passwort") String passwort) {
 		
 		final Timer.Context timercontext = requestsGetMitarbeiter.time();
 		User user = null;
-		LOGGER.trace("GET User anhand Login");
+		LOGGER.trace("GET User anhand Benutzerkennung oder EMail und Passwort");
 		try {
-			user = this.em.createNamedQuery("einUser", User.class)
-				.setParameter("name", name)
+			user = this.em.createNamedQuery("userAnhandBenutzerkennung", User.class)
+				.setParameter("kennung", kennung)
 				.setParameter("passwort", passwort)
 				.getSingleResult();
+
+			UserDTO dto = user.toDTO();
+			dto.setOrganisationuuid(user.getOrganisation().getUuid());
 			
-			return Response.ok(user).build();
+			LOGGER.info("Der User " + dto.getUuid() + "(" + dto.getName() + ") hat sich eingeloggt.");
+			
+			return Response.ok(dto).build();
 		} catch (NoResultException e) {
-			LOGGER.debug("User '" + name + "' mit Passwort '" + passwort + "' nicht gefunden");
+			LOGGER.debug("User mit Name oder EMail '" + kennung + "' und Passwort '" + passwort + "' nicht gefunden");
 			return Response.status(Response.Status.NOT_FOUND).build();
 		} catch (Exception e) {
-			LOGGER.error("GET User anhand Login fehlgeschlagen");
+			LOGGER.error("GET User anhand Benutzerkennung oder EMail und Passwort fehlgeschlagen");
 			throw e;
 		} finally {
 			timercontext.stop();

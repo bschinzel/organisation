@@ -19,11 +19,7 @@ public class AccessControlResponseFilter implements ContainerResponseFilter {
 		
 		headers.add("Access-Control-Allow-Origin", WEBSERVER_URL);
 		headers.add("Vary", "Origin");
-		headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization, Accept, Accept-Language, X-Username, X-Password");
-		
-//		if (requestCtx.getMethod().equals("OPTIONS")) {
-//			responseCtx.setStatus(200);
-//		}
+		headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization, Accept, Accept-Language, X-Benutzerkennung, X-Passwort");
 	}
 
 }

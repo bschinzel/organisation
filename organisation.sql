@@ -2289,7 +2289,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   `uuid` char(36) NOT NULL,
   `organisationuuid` char(36) NOT NULL,
   `name` varchar(255) NOT NULL,
-  `passwort` char(44) NOT NULL,
+  `passwort` char(64) NOT NULL,
   `email` varchar(255) NOT NULL,
   `version` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`organisationuuid`,`uuid`),
